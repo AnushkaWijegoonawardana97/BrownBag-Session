@@ -1,0 +1,57 @@
+---
+import { SITE_TITLE } from "../../lib/constants";
+---
+
+<header
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-6 lg:px-8 py-6 bg-white shadow-sm"
+>
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="/" class="text-2xl font-semibold tracking-tighter animate-fade-in"> {SITE_TITLE} </a>
+
+    <nav class="hidden md:flex items-center space-x-8">
+      <a href="/" class="link-underline font-medium">Home</a>
+      <a href="/blogs" class="link-underline font-medium">Blog</a>
+      <a href="/categories" class="link-underline font-medium">Categories</a>
+      <a href="/authors" class="link-underline font-medium">Authors</a>
+    </nav>
+
+    <div class="hidden md:flex items-center space-x-4">
+      <button class="bg-transparent hover:bg-gray-100 rounded-full p-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-search"
+          ><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"
+          ></line></svg
+        >
+      </button>
+    </div>
+
+    <button class="md:hidden bg-transparent">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-menu"
+        ><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line
+          x1="4"
+          x2="20"
+          y1="18"
+          y2="18"></line></svg
+      >
+    </button>
+  </div>
+</header>

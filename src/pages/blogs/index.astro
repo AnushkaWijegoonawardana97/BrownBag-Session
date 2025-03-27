@@ -1,0 +1,86 @@
+---
+export const prerender = false;
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
+import BlogList from "src/components/templates/BlogList.astro";
+import { PAGE_ARTICLE_LIMIT } from "src/lib/constants";
+import Layout from "../../layouts/Layout.astro";
+
+// Fetch all blog posts and sort by date (newest first)
+const allBlogPosts: CollectionEntry<"blog">[] = (await getCollection("blog")).sort(
+  (a: { data: { date: string | number | Date } }, b: { data: { date: string | number | Date } }) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Get current page from URL, default to 1
+const currentPage = Number(Astro.url.searchParams.get("page")) || 1;
+
+// Calculate pagination
+const totalPages = Math.ceil(allBlogPosts.length / PAGE_ARTICLE_LIMIT);
+const startIndex = (currentPage - 1) * PAGE_ARTICLE_LIMIT;
+const endIndex = startIndex + PAGE_ARTICLE_LIMIT;
+const paginatedPosts = allBlogPosts.slice(startIndex, endIndex);
+
+// Helper function to generate pagination links
+const createPageLink = (page: number) => `/blogs?page=${page}`;
+---
+
+<Layout>
+  <main class="flex-1 pt-24">
+    <div class="container mx-auto px-6 lg:px-8 my-12">
+      <div class="max-w-3xl mx-auto text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl font-bold tracking-tight mb-4">Blog</h1>
+        <p class="text-xl text-muted-foreground mb-8">
+          Explore our latest articles and stay updated with the newest trends.
+        </p>
+      </div>
+
+      <!-- Blog List -->
+      <BlogList blogs={paginatedPosts} />
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center space-x-2 mt-12">
+        <!-- Previous Page Button -->
+        {
+          currentPage > 1 && (
+            <a href={createPageLink(currentPage - 1)} class="pagination-button">
+              ← Prev
+            </a>
+          )
+        }
+
+        <!-- Page Numbers -->
+        {
+          Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <a
+              href={createPageLink(page)}
+              class={`pagination-button ${
+                page === currentPage
+                  ? "bg-primary text-white border-primary shadow-md"
+                  : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </a>
+          ))
+        }
+
+        <!-- Next Page Button -->
+        {
+          currentPage < totalPages && (
+            <a href={createPageLink(currentPage + 1)} class="pagination-button">
+              Next →
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .pagination-button {
+    @apply inline-flex items-center justify-center rounded-lg text-sm font-medium 
+         border transition-all w-10 h-10 shadow-sm font-semibold;
+  }
+</style>
