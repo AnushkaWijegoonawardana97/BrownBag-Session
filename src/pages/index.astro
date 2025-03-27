@@ -1,11 +1,185 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+// Everything Up Here Will Run On The Server
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import FeaturedImage from "../assets/featured-image.jpg";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { getCategoryBadgeColor } from "src/lib/utils";
+import { HOMEPAGE_CATEGORY_LIMIT } from "src/lib/constants";
+import BlogList from "src/components/templates/BlogList.astro";
+import categories from "../data/categories.json";
+import CategoryList from "src/components/templates/CategoryList.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Fetch all blog posts from the blog collection and sort by date (newest first)
+const allBlogPosts: CollectionEntry<"blog">[] = (await getCollection("blog")).sort(
+  (a: { data: { date: string | number | Date } }, b: { data: { date: string | number | Date } }) =>
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Fetch post counts
+const response = await fetch("http://localhost:4321/api/post-counts.json");
+const postCounts = await response.json();
 ---
 
-<Layout>
-	<Welcome />
+<Layout title={"Explore Technology, Design & Business Articles"}>
+  <main class="flex-1 pt-24">
+    <section class="container mx-auto px-6 lg:px-8 mt-8">
+      <!-- Hero Section -->
+      <div class="flex flex-col items-center text-center max-w-3xl mx-auto mb-12">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight animate-fade-in">
+          Discover Thoughtful Content
+        </h1>
+        <p class="text-xl text-muted-foreground mt-4 mb-8 animate-fade-in">
+          Explore our curated collection of articles on technology, design, business, and lifestyle
+        </p>
+        <div class="w-full max-w-lg animate-fade-in">
+          <!-- Search Bar -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search for articles..."
+              class="w-full rounded-lg border bg-background px-4 py-3 pr-10 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            />
+            <button class="absolute right-3 top-3 text-muted-foreground hover:text-foreground">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Post -->
+      <div class="mb-20 animate-fade-in">
+        <!-- Featured post content -->
+        <a href="/blog/1" class="block relative">
+          <div class="group rounded-xl overflow-hidden">
+            <div class="relative h-96 md:h-[500px] overflow-hidden">
+              <Image
+                src={FeaturedImage}
+                alt="Featured Post"
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+              >
+              </div>
+            </div>
+            <div class="absolute bottom-0 left-0 w-full p-8 md:p-12">
+              <span
+                class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-4"
+              >
+                Technology
+              </span>
+              <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 line-clamp-2">
+                The Future of Web Development: Trends to Watch in 2023
+              </h2>
+              <p class="text-gray-200 mb-6 line-clamp-2 max-w-2xl">
+                Explore the emerging technologies and methodologies that are shaping the future of
+                web development and how they will impact the industry.
+              </p>
+              <div class="flex items-center">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                  alt="Author Name"
+                  class="w-10 h-10 rounded-full object-cover mr-4"
+                />
+                <div>
+                  <p class="text-white font-medium">Author Name</p>
+                  <p class="text-gray-300 text-sm">June 12, 2023 · 10 min read</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Latest Posts Section -->
+      <div class="mb-20">
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-3xl font-bold tracking-tight">Latest Articles</h2>
+          <a
+            href={"/blogs"}
+            class="flex items-center text-primary hover:text-primary/80 transition-colors"
+          >
+            <span class="mr-1">View All</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+        <BlogList blogs={allBlogPosts} limit={HOMEPAGE_CATEGORY_LIMIT} />
+      </div>
+
+      <!-- Categories Section -->
+      <div class="mb-20">
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-3xl font-bold tracking-tight">Explore Categories</h2>
+          <a
+            href="/categories"
+            class="flex items-center text-primary hover:text-primary/80 transition-colors"
+          >
+            <span class="mr-1">All Categories</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+        <CategoryList limit={HOMEPAGE_CATEGORY_LIMIT}/>
+      </div>
+
+      <!-- Newsletter Section -->
+      <div class="bg-primary/5 rounded-xl p-8 md:p-12 mb-20">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="text-2xl md:text-3xl font-bold mb-4">Join Our Newsletter</h2>
+          <p class="text-muted-foreground mb-6">
+            Get the latest articles, resources, and inspiration delivered straight to your inbox.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-1"
+            />
+            <button
+              class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </Layout>

@@ -1,0 +1,34 @@
+---
+import * as categories from "../../data/categories.json";
+
+// Fetch post counts
+const response = await fetch("http://localhost:4321/api/post-counts.json");
+const postCounts = await response.json();
+
+// Props received from parent
+const { limit } = Astro.props;
+
+// Apply limit if provided, otherwise show all categories
+const visibleCategories = limit ? categories.slice(0, limit) : categories;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+  {
+    visibleCategories.map((category) => (
+      <a href={`/category/${category.id}`} class="block" id={category.id}>
+        <div class="relative h-48 rounded-xl overflow-hidden">
+          <div class="absolute inset-0 bg-black/40 hover:bg-black/50 transition-colors z-10" />
+          <img
+            src={category.image}
+            alt={category.name}
+            class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+          />
+          <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-4">
+            <h3 class="text-2xl font-bold mb-2">{category.name}</h3>
+            <p class="text-sm opacity-90">{postCounts[category.name] || 0} Articles</p>
+          </div>
+        </div>
+      </a>
+    ))
+  }
+</div>

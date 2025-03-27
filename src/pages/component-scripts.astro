@@ -1,0 +1,51 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { type User } from "../types/user"; // Importing the User type
+
+const name = "Astro";
+
+// API DATA FETCHING
+const users: User[] = await fetch("https://jsonplaceholder.typicode.com/users")
+  .then((res) => res.json())
+  .then((data) => data);
+
+console.log(users);
+---
+
+<Layout title={`${name} - Components`}>
+  <main class="flex-1 pt-24">
+    <section class="container mx-auto px-6 lg:px-8 mt-8">
+      <h1 class="text-3xl mb-6">{name} - Components</h1>
+
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {
+          users?.map((user) => (
+            <li
+              id={String(user.id)}
+              class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <h3 class="text-xl font-semibold text-gray-900">{user.name}</h3>
+              <p class="text-gray-600">{user.email}</p>
+              <p class="text-gray-600">{user.phone}</p>
+              <p class="text-gray-600">{user.website}</p>
+              <div class="mt-4">
+                <h4 class="font-semibold text-gray-700">Address:</h4>
+                <p class="text-gray-600">
+                  {user.address.street}, {user.address.city}, {user.address.zipcode}
+                </p>
+              </div>
+              <div class="mt-2">
+                <h4 class="font-semibold text-gray-700">Company:</h4>
+                <p class="text-gray-600">{user.company.name}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  console.log("This script will run on the client");
+</script>

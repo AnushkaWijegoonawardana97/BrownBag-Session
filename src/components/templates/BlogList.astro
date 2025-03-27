@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { getCategoryBadgeColor } from "src/lib/utils";
+
+interface Props {
+  blogs: CollectionEntry<"blog">[];
+  limit?: number;
+}
+
+const { blogs, limit = blogs.length } = Astro.props;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {
+    blogs.slice(0, limit).map((blog) => (
+      <a href={`/blogs/${blog.slug}`} class="group block rounded-xl">
+        <div class="rounded-lg overflow-hidden mb-4">
+          <img
+            src={blog.data.coverImage}
+            alt={blog.data.title}
+            class="w-full h-60 object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span
+              class={`text-xs px-2 py-1 rounded-full ${getCategoryBadgeColor(blog.data.category)}`}
+            >
+              {blog.data.category}
+            </span>
+            <span class="text-xs text-muted-foreground">{blog.data.date}</span>
+          </div>
+          <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+            {blog.data.title}
+          </h3>
+          <p class="text-muted-foreground line-clamp-2 mb-3">{blog.data.excerpt}</p>
+          <div class="flex items-center">
+            <img
+              src={blog.data.author?.avatar}
+              alt={blog.data.author?.name}
+              class="w-6 h-6 rounded-full object-cover mr-2"
+            />
+            <span class="text-sm font-medium">{blog.data.author?.name}</span>
+          </div>
+        </div>
+      </a>
+    ))
+  }
+</div>

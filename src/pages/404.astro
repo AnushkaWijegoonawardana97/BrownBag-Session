@@ -1,0 +1,43 @@
+---
+import AlertTriangleIcon from "src/components/atoms/AlertTriangleIcon";
+import Layout from "src/layouts/Layout.astro";
+import { Button } from "src/components/atoms/Button";
+import HomeIcon from "src/components/atoms/HomeIcon";
+import ArrowLeftIcon from "src/components/atoms/ArrowLeftIcon";
+---
+
+<Layout class="bg-gray-50 pt-6">
+  <div class="container max-w-4xl mx-auto px-6 py-16 text-center">
+    <div class="mb-8 flex justify-center">
+      <AlertTriangleIcon />
+    </div>
+
+    <h1 class="text-7xl font-bold text-gray-900">404</h1>
+    <h2 class="text-3xl font-semibold text-gray-800">Page Not Found</h2>
+
+    <p class="text-xl text-gray-600 mb-8 max-w-lg mx-auto">
+      We couldn't find the page you're looking for. The page might have been removed, renamed, or is
+      temporarily unavailable.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <Button asChild variant="default" size="lg" class="px-6">
+        <a href="/" class="flex items-center gap-2">
+          <HomeIcon />
+          Back to Home
+        </a>
+      </Button>
+
+      <Button asChild variant="outline" size="lg">
+        <a href="/blogs" class="flex items-center gap-2 ">
+          <ArrowLeftIcon />
+          Browse Articles
+        </a>
+      </Button>
+    </div>
+
+    <div class="mt-16 text-gray-500 border-t pt-8 border-gray-200">
+      <p>If you believe this is an error, please contact our support team.</p>
+    </div>
+  </div>
+</Layout>

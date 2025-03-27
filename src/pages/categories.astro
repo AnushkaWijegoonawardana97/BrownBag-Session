@@ -1,0 +1,42 @@
+---
+import Layout from "src/layouts/Layout.astro";
+import categories from "../data/categories.json";
+
+// Fetch post counts
+const response = await fetch("http://localhost:4321/api/post-counts.json");
+const postCounts = await response.json();
+---
+
+<Layout>
+  <main class="flex-1 pt-24">
+    <div class="container mx-auto px-6 lg:px-8 my-12">
+      <div class="max-w-3xl mx-auto text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl font-bold tracking-tight mb-4">Categories</h1>
+        <p class="text-xl text-muted-foreground">
+          Explore our content by topics that interest you most.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {
+          categories.map((category) => (
+            <a href={`/category/${category.id}`} class="block" id={category.id}>
+              <div class="relative h-48 rounded-xl overflow-hidden">
+                <div class="absolute inset-0 bg-black/40 hover:bg-black/50 transition-colors z-10" />
+                <img
+                  src={category.image}
+                  alt={category.name}
+                  class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white p-4">
+                  <h3 class="text-2xl font-bold mb-2">{category.name}</h3>
+                  <p class="text-sm opacity-90">{postCounts[category.name] || 0} Articles</p>
+                </div>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+</Layout>

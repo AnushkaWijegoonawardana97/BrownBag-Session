@@ -1,0 +1,39 @@
+---
+import Layout from "src/layouts/Layout.astro";
+
+// Fetch the category data (from JSON file)
+import categoriesData from "../../data/categories.json";
+import BlogList from "src/components/templates/BlogList.astro";
+
+// Get the current category from the URL
+const { category } = Astro.params;
+
+// Find the category data for the current category
+const categoryData = categoriesData.find((c) => c.id === category);
+
+// Fetch the posts for the specific category from the API
+const response = await fetch(`http://localhost:4321/api/category/${categoryData?.name}.json`);
+const categoryPosts = await response.json();
+---
+
+<Layout>
+  <main class="flex-1 pt-24">
+    <div class="container mx-auto px-6 lg:px-8 my-12">
+      <div class="relative h-64 rounded-xl overflow-hidden mb-12 animate-fade-in">
+        <div class="absolute inset-0 bg-black/40 z-10"></div>
+        <img src={categoryData?.image} alt={category} class="h-full w-full object-cover" />
+        <div class="absolute inset-0 z-20 flex flex-col items-center justify-center text-white">
+          <h1 class="text-4xl md:text-5xl font-bold mb-2">{category}</h1>
+          <p class="text-xl opacity-90">{categoryPosts.length} Articles</p>
+        </div>
+      </div>
+
+      <BlogList blogs={categoryPosts} />
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-center space-x-2 mt-12">
+        <!-- Pagination elements can be added here if needed -->
+      </div>
+    </div>
+  </main>
+</Layout>
