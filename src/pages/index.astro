@@ -17,6 +17,9 @@ const allBlogPosts: CollectionEntry<"blog">[] = (await getCollection("blog")).so
     new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
+// Get the latest blog post
+const latestBlogPost = allBlogPosts[0];
+
 // Fetch post counts
 const response = await fetch("http://localhost:4321/api/post-counts.json");
 const postCounts = await response.json();
@@ -35,7 +38,7 @@ const postCounts = await response.json();
         </p>
         <div class="w-full max-w-lg animate-fade-in">
           <!-- Search Bar -->
-          <div class="relative">
+          <!-- <div class="relative">
             <input
               type="text"
               placeholder="Search for articles..."
@@ -56,54 +59,58 @@ const postCounts = await response.json();
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
 
       <!-- Featured Post -->
-      <div class="mb-20 animate-fade-in">
-        <!-- Featured post content -->
-        <a href="/blog/1" class="block relative">
-          <div class="group rounded-xl overflow-hidden">
-            <div class="relative h-96 md:h-[500px] overflow-hidden">
-              <Image
-                src={FeaturedImage}
-                alt="Featured Post"
-                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-              >
-              </div>
-            </div>
-            <div class="absolute bottom-0 left-0 w-full p-8 md:p-12">
-              <span
-                class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-primary text-white mb-4"
-              >
-                Technology
-              </span>
-              <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 line-clamp-2">
-                The Future of Web Development: Trends to Watch in 2023
-              </h2>
-              <p class="text-gray-200 mb-6 line-clamp-2 max-w-2xl">
-                Explore the emerging technologies and methodologies that are shaping the future of
-                web development and how they will impact the industry.
-              </p>
-              <div class="flex items-center">
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-                  alt="Author Name"
-                  class="w-10 h-10 rounded-full object-cover mr-4"
-                />
-                <div>
-                  <p class="text-white font-medium">Author Name</p>
-                  <p class="text-gray-300 text-sm">June 12, 2023 · 10 min read</p>
+      {
+        latestBlogPost && (
+          <div class="mb-20 animate-fade-in">
+            <a href={`/blog/${latestBlogPost.slug}`} class="block relative">
+              <div class="group rounded-xl overflow-hidden">
+                <div class="relative h-96 md:h-[500px] overflow-hidden">
+                  <Image
+                    src={latestBlogPost.data.coverImage}
+                    alt={latestBlogPost.data.title}
+                    height={500}
+                    width={1000}
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                </div>
+                <div class="absolute bottom-0 left-0 w-full p-8 md:p-12">
+                  <span
+                    class={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getCategoryBadgeColor(latestBlogPost.data.category)}`}
+                  >
+                    {latestBlogPost.data.category}
+                  </span>
+                  <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 line-clamp-2">
+                    {latestBlogPost.data.title}
+                  </h2>
+                  <p class="text-gray-200 mb-6 line-clamp-2 max-w-2xl">
+                    {latestBlogPost.data.description}
+                  </p>
+                  <div class="flex items-center">
+                    <img
+                      src={latestBlogPost.data.author?.avatar}
+                      alt={latestBlogPost.data?.author?.name}
+                      class="w-10 h-10 rounded-full object-cover mr-4"
+                    />
+                    <div>
+                      <p class="text-white font-medium">{latestBlogPost.data.author?.name}</p>
+                      <p class="text-gray-300 text-sm">
+                        {new Date(latestBlogPost.data.date).toLocaleDateString()} ·{" "}
+                        {latestBlogPost.data.readingTime} min read
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
-        </a>
-      </div>
+        )
+      }
 
       <!-- Latest Posts Section -->
       <div class="mb-20">
@@ -156,7 +163,7 @@ const postCounts = await response.json();
             </svg>
           </a>
         </div>
-        <CategoryList limit={HOMEPAGE_CATEGORY_LIMIT}/>
+        <CategoryList limit={HOMEPAGE_CATEGORY_LIMIT} />
       </div>
 
       <!-- Newsletter Section -->

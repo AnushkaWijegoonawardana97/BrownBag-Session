@@ -66,6 +66,8 @@ Astro introduces the concept of Islands Architecture, which is a hybrid renderin
 - Islands Architecture solves this by sending static HTML by default and then hydrating only selected components ("islands") with JavaScript.
 - This improves performance, SEO, and user experience by reducing unnecessary JavaScript execution.
 
+![alt text](image-1.png)
+
 #### 🏖️ How Does Islands Architecture Work in Astro?
 
 - __Static by Default__ – Pages in Astro are rendered as static HTML at build time, unless specified otherwise.
